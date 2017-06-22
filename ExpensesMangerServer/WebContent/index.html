@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+	<title>Expenses Manager Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8" />
+	<!--style sheets-->
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.jqplot.min.css" />
+
+	<!--jquery-->
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<!--jquerymobile-->
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+	<!--jqplot-->
+	<script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.pieRenderer.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.enhancedPieLegendRenderer.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.barRenderer.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.highlighter.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.pointLabels.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.categoryAxisRenderer.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.canvasAxisTickRenderer.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.canvasTextRenderer.js"></script>
+
+	<!--my script-->
+	<script src="js/use.js"></script>
+
+</head>
+<body>
+	<!--Login Page-->
+	<div data-role="page" data-theme="b" id="login">
+		<div data-role="header">
+			<h1>User Login</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<form method="post">
+				<div class="ui-field-contain">
+					<label for="loginUsername">Username:</label>
+					<input type="text" name="username" id="loginUsername">
+					<label for="loginPassword">Password:</label>
+					<input type="password" name="password" id="loginPassword">
+				</div>
+				<input id="loginBtn" type="button" data-inline="true" value="Submit">
+			</form>
+			<a href="#registration_page">Register</a>
+		</div>
+		<div id="receivedmsg"></div>
+	</div>
+
+	<!--Homepage-->
+	<div data-role="page" data-theme="b" id="home">
+		<div data-role="main" class="ui-content">
+			<h2 id=welcome_title>Welcome</h2>
+			<ul data-role="listview">
+				<li><a href="#newItemPopup" data-rel="dialog" data-transition="pop">Add Expense Item</a></li>
+				<li><a href="#expensesListPage">Expenses View</a></li>
+				<li><a href="#settingPage">Settings</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<!--New Item Form Page-->
+	<div data-role="page" id="newItemPopup" data-theme="b">
+		<form id="new_item_form" >
+			<h3>New Expense Item</h3>
+			<input type="hidden" name="subcategory" value="none">
+			<input type="text" name="name" id="new_item_name" placeholder="Name (ie: Shoes)">
+			<input type="text" name="comment" id="new_item_comment" placeholder="(ie: I had to buy this!)">
+			<input type="number" name="cost" id="new_item_cost" placeholder="$">
+			<fieldset class="ui-field-contain">
+				<label for="category-select-new-item-form">Select Category</label>
+				<select name="category" class="category-select" id="category-select-new-item-form">
+				</select>
+			</fieldset>
+			<input type="button" data-inline="true" data-mini="true" id="new_item_submit_btn" class="ui-btn" value="Add">
+		</form>
+	</div>
+
+	<!--User Registration Page-->
+	<div data-role="page" data-theme="b" id="registration_page">
+		<div data-role="header">
+			<h1>User Registration</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<form method="post" id="form">
+				<div class="ui-field-contain">
+					<label for="reg_username">Username:</label>
+					<input type="text" name="username" id="reg_username">
+					<label for="reg_password">Password:</label>
+					<input type="password" name="password" id="reg_password">
+				</div>
+				<input id="registration_btn" type="submit" data-inline="true" value="Submit">
+			</form>
+		</div>
+	</div>
+
+	<!--Expenses List Page-->
+	<div data-role="page" data-theme="b" id="expensesListPage">
+		<div data-role="header" data-id="expenses-filter-header" data-position="fixed">
+			<h1>Expenses View</h1>
+			<a href="#left-panel-ev" data-icon="carat-r" data-iconpos="notext" data-shadow="false" data-iconshadow="false" class="ui-nodisc-icon">Open left panel</a>
+			<div>
+			<form id="date-scope-form">
+				<fieldset data-role="controlgroup" data-type="horizontal">
+					<input type="radio" name="radio-choice-date-scope" id="radio-choice-today" value="today">
+					<label for="radio-choice-today">Today</label>
+					<input type="radio" name="radio-choice-date-scope" id="radio-choice-ThisWeek" value="thisweek">
+					<label for="radio-choice-ThisWeek">This Week</label>
+					<input type="radio" name="radio-choice-date-scope" id="radio-choice-ThisMonth" value="thismonth" checked="checked">
+					<label for="radio-choice-ThisMonth">This Month</label>
+					<input type="radio" name="radio-choice-date-scope" id="radio-choice-threemonths" value="threemonths">
+					<label for="radio-choice-threemonths">Last 3 Months</label>
+				</fieldset>
+			</form>
+			<form id="category-filter-form">
+			</form>
+			<form class="ui-filterable">
+				<input id="input-hidden-filter-string" type="hidden" value="thismonth&">
+			</form>
+			</div>
+		</div><!--header-->
+		<div data-role="popup" id="budget-deviation-warning" class="ui-content" data-overlay-theme="b" data-transition="flow">
+			<p>budget deviation message</p>
+		</div>
+		<div class="graphsDiv" style="height: 100%; width:100%; font-size: 0;">
+			<div id="piechart" style="width: 50%; display: inline-block; *display: inline; zoom: 1; vertical-align: top;">
+			</div>
+			<div id="monthsChart" style="width: 50%; display: inline-block; *display: inline; zoom: 1; vertical-align: top;">
+			</div>
+		</div>
+		<div id="expenses-listview-div">
+			<ul id="expenses_listview" data-role="listview" data-split-icon="delete" data-split-theme="d" data-filter="true" data-input="#input-hidden-filter-string">
+			</ul>
+		</div>
+		<div data-role="panel" id="left-panel-ev" data-theme="b" data-display="overlay">
+			<p>Expenses Manager</p>
+			<a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-right">Close</a>
+			<a href="#newItemPopup" class="ui-btn ui-shadow">Add Expense</a>
+			<a href="#" class="ui-btn ui-shadow">Expenses View</a>
+			<a href="#settingPage" class="ui-btn ui-shadow">Setting</a>
+		</div><!-- /panel -->
+	</div>
+
+	<!--Setting Page-->
+	<div data-role="page" data-theme="b" id="settingPage">
+		<div data-role="header" data-id="setting-header" data-position="fixed">
+			<h1>Expenses View</h1>
+			<a href="#left-panel-sp" data-icon="carat-r" data-iconpos="notext" data-shadow="false" data-iconshadow="false" class="ui-nodisc-icon">Open left panel</a>
+		</div>
+		<div data-role="popup" id="popupMessage">
+		</div>
+		<ul id="category_listview" data-role="listview" data-split-icon="delete" data-split-theme="d">
+		</ul>
+			<div data-role="panel" id="left-panel-sp" data-theme="b" data-display="overlay">
+			<p>Expenses Manager</p>
+			<a href="#" data-rel="close" class="ui-btn ui-corner-all ui-shadow ui-mini ui-btn-inline ui-icon-delete ui-btn-icon-left ui-btn-right">Close</a>
+			<a href="#newItemPopup" class="ui-btn ui-shadow">Add Expense</a>
+			<a href="#expensesListPage" class="ui-btn ui-shadow">Expenses View</a>
+			<a href="#" class="ui-btn ui-shadow">Setting</a>
+		</div><!-- /panel -->
+	</div>
+</body>
+</html>
